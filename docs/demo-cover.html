@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>表紙デモ - cocowa</title>
+    <style>
+      :root {
+        --bg: #f7f7f7;
+        --panel: #ffffff;
+        --line: #dfe4ea;
+        --text: #1f2937;
+        --muted: #4b5563;
+        --accent: #4f46e5;
+        --accent-soft: #eef2ff;
+        --shadow: 0 8px 20px rgba(31, 41, 55, 0.08);
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        font-family: "Segoe UI", "Hiragino Sans", "Yu Gothic", sans-serif;
+        background: var(--bg);
+        color: var(--text);
+      }
+
+      .page {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 20px;
+      }
+
+      .cover {
+        width: min(1000px, 100%);
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 22px;
+        box-shadow: var(--shadow);
+        padding: 52px 36px;
+        text-align: center;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: clamp(36px, 5vw, 64px);
+        line-height: 1.1;
+        letter-spacing: 0.04em;
+      }
+
+      .tagline {
+        margin: 18px 0 0;
+        font-size: clamp(20px, 2.5vw, 32px);
+        color: var(--muted);
+        line-height: 1.6;
+      }
+
+      .description {
+        max-width: 760px;
+        margin: 28px auto 0;
+        font-size: clamp(16px, 1.8vw, 20px);
+        line-height: 1.8;
+        color: var(--text);
+      }
+
+      .qr-box {
+        width: min(420px, 85%);
+        height: 120px;
+        margin: 32px auto 0;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--muted);
+        background: #fafafa;
+        font-size: 18px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <div class="cover">
+        <h1>cocowa</h1>
+        <p class="tagline">ここの“いま”を、みんなで共有。</p>
+        <p class="description">
+          混み具合・待ち時間・限定商品の残りを、今その場にいる人が教えてくれる。丸の内のお店の「いま」を、行く前に確認できるWebアプリ
+        </p>
+        <div class="qr-box">公開後に追加</div>
+      </div>
+    </div>
+  </body>
+</html>

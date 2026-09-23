@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ペルソナデモ - cocowa</title>
+    <style>
+      :root {
+        --bg: #f7f7f7;
+        --panel: #ffffff;
+        --line: #dfe4ea;
+        --text: #1f2937;
+        --muted: #4b5563;
+        --accent: #4f46e5;
+        --accent-soft: #eef2ff;
+        --shadow: 0 8px 20px rgba(31, 41, 55, 0.08);
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        font-family: "Segoe UI", "Hiragino Sans", "Yu Gothic", sans-serif;
+        background: var(--bg);
+        color: var(--text);
+      }
+
+      .wrap {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 40px 20px 60px;
+      }
+
+      .header-card {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        box-shadow: var(--shadow);
+        padding: 22px 24px;
+        margin-bottom: 28px;
+      }
+
+      .header-card h1 {
+        margin: 0 0 8px;
+        font-size: 32px;
+      }
+
+      .header-card p {
+        margin: 0;
+        font-size: 18px;
+        line-height: 1.7;
+        color: var(--muted);
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(220px, 1fr));
+        gap: 18px;
+      }
+
+      .card {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        box-shadow: var(--shadow);
+        overflow: hidden;
+        cursor: pointer;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      .card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 24px rgba(31, 41, 55, 0.12);
+      }
+
+      .card-header {
+        background: var(--accent-soft);
+        border-bottom: 1px solid var(--line);
+        padding: 18px 18px 14px;
+      }
+
+      .card-header h2 {
+        margin: 0;
+        font-size: 22px;
+      }
+
+      .card-body {
+        padding: 18px;
+        font-size: 16px;
+        line-height: 1.7;
+        color: var(--muted);
+      }
+
+      .detail {
+        margin-top: 24px;
+        display: none;
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        box-shadow: var(--shadow);
+        padding: 20px 22px;
+      }
+
+      .detail.open {
+        display: block;
+      }
+
+      .detail h3 {
+        margin: 0 0 12px;
+        font-size: 24px;
+      }
+
+      .detail p {
+        margin: 0 0 10px;
+        font-size: 16px;
+        line-height: 1.8;
+      }
+
+      @media (max-width: 900px) {
+        .grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <div class="header-card">
+        <h1>Aさん（仮）</h1>
+        <p>20代後半、丸の内のオフィスで働く会社員。スマホで情報収集。</p>
+      </div>
+
+      <div class="grid">
+        <article class="card" data-scene="lunch">
+          <div class="card-header">
+            <h2>平日の昼</h2>
+          </div>
+          <div class="card-body">
+            昼休み60分。着いたら行列で、並ぶだけで終わる。
+          </div>
+        </article>
+
+        <article class="card" data-scene="evening">
+          <div class="card-header">
+            <h2>平日の帰り</h2>
+          </div>
+          <div class="card-body">
+            東京駅で限定商品を買いたいが、売り切れていることが多い。
+          </div>
+        </article>
+
+        <article class="card" data-scene="holiday">
+          <div class="card-header">
+            <h2>休日</h2>
+          </div>
+          <div class="card-body">
+            行きたいお店の混み具合が着くまで分からない。
+          </div>
+        </article>
+      </div>
+
+      <div id="detail" class="detail" aria-live="polite"></div>
+    </div>
+
+    <script>
+      const details = {
+        lunch: {
+          title: '平日の昼',
+          text: '平日の昼は、昼休み60分で、着いたら行列だったというケースが多い。店に着いてから「行列で、並ぶだけで終わる」という状況が、仕事や休憩の予定を崩してしまう。cocowa なら、行く前に混み具合を確認できる。'
+        },
+        evening: {
+          title: '平日の帰り',
+          text: '東京駅で限定商品を買いたいが、売り切れていることが多い。帰り際に「買う予定だったけど、もう終わっていた」という失敗を避けたい。cocowa なら、残りの状況を事前に確認できる。'
+        },
+        holiday: {
+          title: '休日',
+          text: '休日は、行きたいお店の混み具合が着くまで分からない。時間の計画が立てにくく、予定が崩れやすい。cocowa なら、今その場の状況を事前に把握できる。'
+        }
+      };
+
+      const detailBox = document.getElementById('detail');
+
+      document.querySelectorAll('.card').forEach((card) => {
+        card.addEventListener('click', () => {
+          const key = card.dataset.scene;
+          const item = details[key];
+          if (!item) return;
+
+          const opened = detailBox.classList.contains('open');
+          const same = detailBox.dataset.scene === key;
+
+          if (opened && same) {
+            detailBox.classList.remove('open');
+            detailBox.removeAttribute('data-scene');
+            detailBox.innerHTML = '';
+            return;
+          }
+
+          detailBox.dataset.scene = key;
+          detailBox.innerHTML = `
+            <h3>${item.title}</h3>
+            <p>${item.text}</p>
+          `;
+          detailBox.classList.add('open');
+        });
+      });
+    </script>
+  </body>
+</html>

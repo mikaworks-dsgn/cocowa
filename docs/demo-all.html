@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>cocowa demo all</title>
+    <style>
+      :root {
+        --bg: #f7f7f7;
+        --panel: #ffffff;
+        --line: #dfe4ea;
+        --text: #1f2937;
+        --muted: #4b5563;
+        --accent: #4f46e5;
+        --accent-soft: #eef2ff;
+        --good: #1f9d67;
+        --warn: #d97706;
+        --bad: #9ca3af;
+        --shadow: 0 8px 20px rgba(31, 41, 55, 0.08);
+      }
+
+      * { box-sizing: border-box; }
+
+      html, body {
+        margin: 0;
+        height: 100%;
+        background: var(--bg);
+        color: var(--text);
+        font-family: "Segoe UI", "Hiragino Sans", "Yu Gothic", sans-serif;
+      }
+
+      body {
+        overflow: hidden;
+      }
+
+      .stage {
+        position: relative;
+        width: 100%;
+        height: 100vh;
+        overflow: hidden;
+        background: linear-gradient(180deg, #f5f7fb, #f0f2f7);
+      }
+
+      .slides {
+        position: relative;
+        width: 100%;
+        height: 100%;
+      }
+
+      .slide {
+        position: absolute;
+        inset: 0;
+        opacity: 0;
+        pointer-events: none;
+        transform: translateX(30px);
+        transition: opacity 0.25s ease, transform 0.25s ease;
+        padding: 22px;
+      }
+
+      .slide.active {
+        opacity: 1;
+        pointer-events: auto;
+        transform: translateX(0);
+      }
+
+      .slide-inner {
+        width: min(1200px, 100%);
+        height: calc(100vh - 90px);
+        margin: 0 auto;
+        background: transparent;
+      }
+
+      .nav {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 12px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 12px;
+        z-index: 20;
+      }
+
+      .nav button {
+        border: 1px solid var(--line);
+        background: rgba(255,255,255,0.9);
+        color: var(--text);
+        border-radius: 999px;
+        padding: 10px 18px;
+        cursor: pointer;
+        font-size: 16px;
+        box-shadow: var(--shadow);
+      }
+
+      .page-counter {
+        background: rgba(255,255,255,0.9);
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 8px 14px;
+        min-width: 90px;
+        text-align: center;
+        font-size: 14px;
+        color: var(--muted);
+        box-shadow: var(--shadow);
+      }
+
+      /* cover */
+      .cover-page .cover {
+        width: min(1000px, 100%);
+        height: 100%;
+        margin: 0 auto;
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 22px;
+        box-shadow: var(--shadow);
+        padding: 52px 36px;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+
+      .cover-page h1 {
+        margin: 0;
+        font-size: clamp(36px, 5vw, 64px);
+        line-height: 1.1;
+        letter-spacing: 0.04em;
+      }
+
+      .cover-page .tagline {
+        margin: 18px 0 0;
+        font-size: clamp(20px, 2.5vw, 32px);
+        color: var(--muted);
+        line-height: 1.6;
+      }
+
+      .cover-page .description {
+        max-width: 760px;
+        margin: 28px auto 0;
+        font-size: clamp(16px, 1.8vw, 20px);
+        line-height: 1.8;
+        color: var(--text);
+      }
+
+      .cover-page .qr-box {
+        width: min(420px, 85%);
+        height: 120px;
+        margin: 32px auto 0;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--muted);
+        background: #fafafa;
+        font-size: 18px;
+      }
+
+      /* background */
+      .background-page .heading {
+        margin: 0 0 28px;
+        text-align: center;
+        font-size: 32px;
+      }
+
+      .background-page .grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(220px, 1fr));
+        gap: 18px;
+      }
+
+      .background-page .card {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        box-shadow: var(--shadow);
+        overflow: hidden;
+        cursor: pointer;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      .background-page .card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 24px rgba(31, 41, 55, 0.12);
+      }
+
+      .background-page .card-header {
+        background: var(--accent-soft);
+        border-bottom: 1px solid var(--line);
+        padding: 18px 18px 14px;
+      }
+
+      .background-page .card-header h2 {
+        margin: 0;
+        font-size: 22px;
+      }
+
+      .background-page .number {
+        display: block;
+        font-size: 42px;
+        font-weight: 700;
+        text-align: center;
+        padding: 26px 18px 0;
+        color: var(--accent);
+      }
+
+      .background-page .card-body {
+        padding: 14px 18px 20px;
+        font-size: 16px;
+        line-height: 1.7;
+        color: var(--muted);
+        text-align: center;
+      }
+
+      .background-page .detail {
+        margin-top: 24px;
+        display: none;
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        box-shadow: var(--shadow);
+        padding: 20px 22px;
+      }
+
+      .background-page .detail.open {
+        display: block;
+      }
+
+      .background-page .detail h3 {
+        margin: 0 0 12px;
+        font-size: 24px;
+      }
+
+      .background-page .detail p {
+        margin: 0 0 10px;
+        font-size: 16px;
+        line-height: 1.8;
+      }
+
+      .background-page .source {
+        color: var(--muted);
+      }
+
+      /* persona */
+      .persona-page .header-card {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        box-shadow: var(--shadow);
+        padding: 22px 24px;
+        margin-bottom: 28px;
+      }
+
+      .persona-page .header-card h1 {
+        margin: 0 0 8px;
+        font-size: 32px;
+      }
+
+      .persona-page .header-card p {
+        margin: 0;
+        font-size: 18px;
+        line-height: 1.7;
+        color: var(--muted);
+      }
+
+      .persona-page .grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(220px, 1fr));
+        gap: 18px;
+      }
+
+      .persona-page .card {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        box-shadow: var(--shadow);
+        overflow: hidden;
+        cursor: pointer;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      .persona-page .card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 24px rgba(31, 41, 55, 0.12);
+      }
+
+      .persona-page .card-header {
+        background: var(--accent-soft);
+        border-bottom: 1px solid var(--line);
+        padding: 18px 18px 14px;
+      }
+
+      .persona-page .card-header h2 {
+        margin: 0;
+        font-size: 22px;
+      }
+
+      .persona-page .card-body {
+        padding: 18px;
+        font-size: 16px;
+        line-height: 1.7;
+        color: var(--muted);
+      }
+
+      .persona-page .detail {
+        margin-top: 24px;
+        display: none;
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        box-shadow: var(--shadow);
+        padding: 20px 22px;
+      }
+
+      .persona-page .detail.open {
+        display: block;
+      }
+
+      .persona-page .detail h3 {
+        margin: 0 0 12px;
+        font-size: 24px;
+      }
+
+      .persona-page .detail p {
+        margin: 0 0 10px;
+        font-size: 16px;
+        line-height: 1.8;
+      }
+
+      /* issues */
+      .issues-page h1 {
+        margin: 0 0 26px;
+        text-align: center;
+        font-size: 32px;
+      }
+
+      .issues-page .grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(220px, 1fr));
+        gap: 18px;
+      }
+
+      .issues-page .card {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        box-shadow: var(--shadow);
+        overflow: hidden;
+        cursor: pointer;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      .issues-page .card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 24px rgba(31, 41, 55, 0.12);
+      }
+
+      .issues-page .card-header {
+        background: var(--accent-soft);
+        border-bottom: 1px solid var(--line);
+        padding: 18px 18px 14px;
+      }
+
+      .issues-page .card-header h2 {
+        margin: 0;
+        font-size: 22px;
+      }
+
+      .issues-page .card-body {
+        padding: 18px;
+        font-size: 16px;
+        line-height: 1.7;
+        color: var(--muted);
+      }
+
+      .issues-page .detail {
+        margin-top: 24px;
+        display: none;
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        box-shadow: var(--shadow);
+        padding: 20px 22px;
+      }
+
+      .issues-page .detail.open {
+        display: block;
+      }
+
+      .issues-page .detail h3 {
+        margin: 0 0 12px;
+        font-size: 24px;
+      }
+
+      .issues-page .detail p {
+        margin: 0 0 10px;
+        font-size: 16px;
+        line-height: 1.8;
+      }
+
+      .issues-page .summary {
+        margin-top: 28px;
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        box-shadow: var(--shadow);
+        padding: 20px 22px;
+        font-size: 18px;
+        line-height: 1.8;
+      }
+
+      /* compare */
+      .compare-page .heading {
+        margin: 0 0 12px;
+        text-align: center;
+        font-size: 32px;
+      }
+
+      .compare-page .subtitle {
+        margin: 0 0 28px;
+        text-align: center;
+        color: var(--muted);
+        font-size: 18px;
+      }
+
+      .compare-page .grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(180px, 1fr));
+        gap: 18px;
+      }
+
+      .compare-page .card {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        box-shadow: var(--shadow);
+        overflow: hidden;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        cursor: pointer;
+      }
+
+      .compare-page .card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 24px rgba(31, 41, 55, 0.12);
+      }
+
+      .compare-page .card-header {
+        padding: 18px 18px 14px;
+        border-bottom: 1px solid var(--line);
+        background: var(--accent-soft);
+      }
+
+      .compare-page .service-name {
+        margin: 0;
+        font-size: 20px;
+        line-height: 1.4;
+      }
+
+      .compare-page .metrics {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 8px;
+        padding: 18px;
+      }
+
+      .compare-page .metric {
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 12px 10px;
+        text-align: center;
+        background: #fafafa;
+      }
+
+      .compare-page .metric-label {
+        display: block;
+        font-size: 12px;
+        color: var(--muted);
+        margin-bottom: 8px;
+      }
+
+      .compare-page .mark {
+        font-size: 26px;
+        font-weight: 700;
+      }
+
+      .compare-page .good { color: var(--good); }
+      .compare-page .warn { color: var(--warn); }
+      .compare-page .bad { color: var(--bad); }
+
+      .compare-page .detail {
+        margin-top: 18px;
+        display: none;
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        box-shadow: var(--shadow);
+        padding: 20px 22px;
+      }
+
+      .compare-page .detail.open {
+        display: block;
+      }
+
+      .compare-page .detail-title {
+        margin: 0 0 10px;
+        font-size: 22px;
+      }
+
+      .compare-page .detail p {
+        margin: 0 0 10px;
+        font-size: 16px;
+        line-height: 1.7;
+        color: var(--text);
+      }
+
+      .compare-page .note {
+        margin-top: 30px;
+        border-top: 1px solid var(--line);
+        padding-top: 20px;
+      }
+
+      .compare-page .note h2 {
+        font-size: 22px;
+        margin: 0 0 12px;
+      }
+
+      .compare-page .note ul {
+        margin: 0;
+        padding-left: 20px;
+        font-size: 16px;
+        line-height: 1.8;
+        color: var(--text);
+      }
+
+      .compare-page .source {
+        margin-top: 14px;
+        font-size: 16px;
+        line-height: 1.6;
+        color: var(--muted);
+      }
+
+      @media (max-width: 900px) {
+        .background-page .grid,
+        .persona-page .grid,
+        .issues-page .grid,
+        .compare-page .grid {
+          grid-template-columns: repeat(2, minmax(180px, 1fr));
+        }
+      }
+
+      @media (max-width: 560px) {
+        .background-page .grid,
+        .persona-page .grid,
+        .issues-page .grid,
+        .compare-page .grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="stage">
+      <div class="slides">
+
+        <section class="slide cover-page active">
+          <div class="slide-inner">
+            <div class="cover">
+              <h1>cocowa</h1>
+              <p class="tagline">ここの“いま”を、みんなで共有。</p>
+              <p class="description">
+                混み具合・待ち時間・限定商品の残りを、今その場にいる人が教えてくれる。丸の内のお店の「いま」を、行く前に確認できるWebアプリ
+              </p>
+              <div class="qr-box">公開後に追加</div>
+            </div>
+          </div>
+        </section>
+
+        <section class="slide background-page">
+          <div class="slide-inner">
+            <h1 class="heading">背景</h1>
+            <div class="grid">
+              <article class="card" data-item="workers">
+                <div class="card-header"><h2>丸の内の就業者数</h2></div>
+                <span class="number">約28万人</span>
+                <div class="card-body">丸の内周辺（大丸有地区）で働く人は約28万人（2019年時点）</div>
+              </article>
+              <article class="card" data-item="lunch">
+                <div class="card-header"><h2>昼休みの実態</h2></div>
+                <span class="number">56.3%</span>
+                <div class="card-body">会社員の56.3%が、昼休みを十分に取れていない</div>
+              </article>
+              <article class="card" data-item="waiting">
+                <div class="card-header"><h2>待ち時間の意識</h2></div>
+                <span class="number">18.8分</span>
+                <div class="card-body">理想は63.1分、実際は44.3分（差18.8分）</div>
+              </article>
+            </div>
+            <div id="backgroundDetail" class="detail" aria-live="polite"></div>
+          </div>
+        </section>
+
+        <section class="slide persona-page">
+          <div class="slide-inner">
+            <div class="header-card">
+              <h1>Aさん（仮）</h1>
+              <p>20代後半、丸の内のオフィスで働く会社員。スマホで情報収集。</p>
+            </div>
+            <div class="grid">
+              <article class="card" data-scene="lunch">
+                <div class="card-header"><h2>平日の昼</h2></div>
+                <div class="card-body">昼休み60分。着いたら行列で、並ぶだけで終わる</div>
+              </article>
+              <article class="card" data-scene="evening">
+                <div class="card-header"><h2>平日の帰り</h2></div>
+                <div class="card-body">東京駅で限定商品を買いたいが、売り切れていることが多い</div>
+              </article>
+              <article class="card" data-scene="holiday">
+                <div class="card-header"><h2>休日</h2></div>
+                <div class="card-body">行きたいお店の混み具合が着くまで分からない</div>
+              </article>
+            </div>
+            <div id="personaDetail" class="detail" aria-live="polite"></div>
+          </div>
+        </section>
+
+        <section class="slide issues-page">
+          <div class="slide-inner">
+            <h1>課題</h1>
+            <div class="grid">
+              <article class="card" data-type="lunch">
+                <div class="card-header"><h2>昼</h2></div>
+                <div class="card-body">着いてから行列と分かり、昼休みを使い切ってしまう</div>
+              </article>
+              <article class="card" data-type="return">
+                <div class="card-header"><h2>帰り</h2></div>
+                <div class="card-body">限定商品が売り切れかどうか、お店に着くまで分からない</div>
+              </article>
+              <article class="card" data-type="holiday">
+                <div class="card-header"><h2>休日</h2></div>
+                <div class="card-body">行きたいお店の混み具合が読めず、時間の計画が立てにくい</div>
+              </article>
+            </div>
+            <div id="issuesDetail" class="detail" aria-live="polite"></div>
+            <div class="summary">
+              根本の課題は、「いま」の待ち時間や商品の残りを知る手段がないこと（確認できた既存の混雑情報は、統計にもとづく目安が中心）
+            </div>
+          </div>
+        </section>
+
+        <section class="slide compare-page">
+          <div class="slide-inner">
+            <h2 class="heading">既存サービスとの比較</h2>
+            <div class="grid">
+              <article class="card" data-service="google">
+                <div class="card-header"><h2 class="service-name">Googleマップ（位置情報の統計）</h2></div>
+                <div class="metrics">
+                  <div class="metric"><span class="metric-label">いまの混み具合</span><span class="mark warn">△</span></div>
+                  <div class="metric"><span class="metric-label">待ち時間</span><span class="mark warn">△</span></div>
+                  <div class="metric"><span class="metric-label">商品の残り</span><span class="mark bad">×</span></div>
+                </div>
+              </article>
+              <article class="card" data-service="yahoo">
+                <div class="card-header"><h2 class="service-name">Yahoo!MAP 混雑レーダー（位置情報の統計）</h2></div>
+                <div class="metrics">
+                  <div class="metric"><span class="metric-label">いまの混み具合</span><span class="mark warn">△</span></div>
+                  <div class="metric"><span class="metric-label">待ち時間</span><span class="mark bad">×</span></div>
+                  <div class="metric"><span class="metric-label">商品の残り</span><span class="mark bad">×</span></div>
+                </div>
+              </article>
+              <article class="card" data-service="queue">
+                <div class="card-header"><h2 class="service-name">順番待ちシステム（お店のシステム）</h2></div>
+                <div class="metrics">
+                  <div class="metric"><span class="metric-label">いまの混み具合</span><span class="mark good">○</span></div>
+                  <div class="metric"><span class="metric-label">待ち時間</span><span class="mark good">○</span></div>
+                  <div class="metric"><span class="metric-label">商品の残り</span><span class="mark bad">×</span></div>
+                </div>
+              </article>
+              <article class="card" data-service="cocowa">
+                <div class="card-header"><h2 class="service-name">cocowa（現場の人の投稿）</h2></div>
+                <div class="metrics">
+                  <div class="metric"><span class="metric-label">いまの混み具合</span><span class="mark good">○</span></div>
+                  <div class="metric"><span class="metric-label">待ち時間</span><span class="mark good">○</span></div>
+                  <div class="metric"><span class="metric-label">商品の残り</span><span class="mark good">○</span></div>
+                </div>
+              </article>
+            </div>
+            <div id="compareDetail" class="detail" aria-live="polite"></div>
+            <div class="note">
+              <h2>記号の意味</h2>
+              <ul>
+                <li>○＝確認できた（順番待ちシステムは、導入している店のみ）</li>
+                <li>△＝統計にもとづく目安（エリア単位を含む）</li>
+                <li>×＝確認できず（機能がないという意味ではなく、調べた範囲で見つからなかった）</li>
+              </ul>
+              <p class="source">出典：Google公式ブログ（2020年10月）、Yahoo! JAPAN プレスリリース（2020年）、順番待ちシステムの解説記事（ASPIC）</p>
+            </div>
+          </div>
+        </section>
+
+      </div>
+
+      <div class="nav">
+        <button id="prevBtn" type="button">戻る</button>
+        <div id="counter" class="page-counter">1/5</div>
+        <button id="nextBtn" type="button">次へ</button>
+      </div>
+    </div>
+
+    <script>
+      const slides = Array.from(document.querySelectorAll('.slide'));
+      let index = 0;
+      const counter = document.getElementById('counter');
+      const prevBtn = document.getElementById('prevBtn');
+      const nextBtn = document.getElementById('nextBtn');
+
+      function render() {
+        slides.forEach((slide, i) => slide.classList.toggle('active', i === index));
+        counter.textContent = `${index + 1}/${slides.length}`;
+        prevBtn.disabled = index === 0;
+        nextBtn.textContent = index === slides.length - 1 ? '最後' : '次へ';
+      }
+
+      function showNext() {
+        if (index < slides.length - 1) index += 1;
+        render();
+      }
+
+      function showPrev() {
+        if (index > 0) index -= 1;
+        render();
+      }
+
+      prevBtn.addEventListener('click', showPrev);
+      nextBtn.addEventListener('click', showNext);
+
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'ArrowRight' || event.key === 'PageDown' || event.key === ' ') {
+          showNext();
+        }
+        if (event.key === 'ArrowLeft' || event.key === 'PageUp') {
+          showPrev();
+        }
+      });
+
+      // Swipe support for mobile
+      let touchStartX = 0;
+      let touchStartY = 0;
+      document.addEventListener('touchstart', (event) => {
+        const t = event.changedTouches[0];
+        touchStartX = t.clientX;
+        touchStartY = t.clientY;
+      }, { passive: true });
+
+      document.addEventListener('touchend', (event) => {
+        const t = event.changedTouches[0];
+        const dx = t.clientX - touchStartX;
+        const dy = t.clientY - touchStartY;
+        if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) {
+          if (dx < 0) showNext();
+          if (dx > 0) showPrev();
+        }
+      }, { passive: true });
+
+      const backgroundDetails = {
+        workers: {
+          title: '丸の内の就業者数',
+          text: '丸の内周辺（大丸有地区）で働く人は約28万人（2019年時点）。昼休みの利用者が多いエリアであることが背景にある。',
+          source: '出典：三菱地所 資料（2019年4月）'
+        },
+        lunch: {
+          title: '昼休みの実態',
+          text: '会社員の56.3%が、昼休みを十分に取れていない。理想は63.1分、実際は44.3分で、差は18.8分。昼休みの時間を使って、待ち時間の不安を減らしたいという背景がある。',
+          source: '出典：アサヒグループ食品「働く人のお昼休憩に関する実態調査」（2023年5月）'
+        },
+        waiting: {
+          title: '待ち時間の意識',
+          text: '待ち時間が事前に分かる環境が広がり、待つことへの余裕が生まれているという分析もある。今の状況が分かると、時間の使い方が変わる。',
+          source: '出典：シチズン時計「待ち時間」に関する調査（2023年、Forbes JAPAN掲載）'
+        }
+      };
+
+      const personaDetails = {
+        lunch: {
+          title: '平日の昼',
+          text: '平日の昼は、昼休み60分で、着いたら行列だったというケースが多い。店に着いてから「行列で、並ぶだけで終わる」という状況が、仕事や休憩の予定を崩してしまう。cocowa なら、行く前に混み具合を確認できる。'
+        },
+        evening: {
+          title: '平日の帰り',
+          text: '東京駅で限定商品を買いたいが、売り切れていることが多い。帰り際に「買う予定だったけど、もう終わっていた」という失敗を避けたい。cocowa なら、残りの状況を事前に確認できる。'
+        },
+        holiday: {
+          title: '休日',
+          text: '休日は、行きたいお店の混み具合が着くまで分からない。時間の計画が立てにくく、予定が崩れやすい。cocowa なら、今その場の状況を事前に把握できる。'
+        }
+      };
+
+      const issuesDetails = {
+        lunch: {
+          title: '昼',
+          text: '昼に着いてから行列と分かり、昼休みを使い切ってしまう。時間が限られていると、並ぶことだけで休憩の価値が失われる。'
+        },
+        return: {
+          title: '帰り',
+          text: '限定商品が売り切れかどうか、お店に着くまで分からない。行きたい買い物があるとき、現地での失敗が大きくなる。'
+        },
+        holiday: {
+          title: '休日',
+          text: '行きたいお店の混み具合が読めず、時間の計画が立てにくい。リスクを前もって知りたい。'
+        }
+      };
+
+      const compareDetails = {
+        google: {
+          title: 'Googleマップ（位置情報の統計）',
+          text: 'いまの混み具合と待ち時間は、位置情報にもとづく統計として目安として確認できるが、商品の残りや現場の一言は確認できず。'
+        },
+        yahoo: {
+          title: 'Yahoo!MAP 混雑レーダー（位置情報の統計）',
+          text: 'いまの混み具合は確認できるが、待ち時間や商品の残りの情報は調べた範囲では確認できなかった。'
+        },
+        queue: {
+          title: '順番待ちシステム（お店のシステム）',
+          text: 'お店側のシステムで、いまの混み具合や待ち時間は確認できる。ただし、商品の残りや現場の一言までは確認できなかった。'
+        },
+        cocowa: {
+          title: 'cocowa（現場の人の投稿）',
+          text: '現場の人の投稿で、いまの混み具合・待ち時間・商品の残りを一緒に確認できる。これは現場の一言を使う価値がある。'
+        }
+      };
+
+      function bindBackground() {
+        const detailBox = document.getElementById('backgroundDetail');
+        document.querySelectorAll('.background-page .card').forEach((card) => {
+          card.addEventListener('click', () => {
+            const key = card.dataset.item;
+            const item = backgroundDetails[key];
+            if (!item) return;
+            const same = detailBox.dataset.item === key && detailBox.classList.contains('open');
+            if (same) {
+              detailBox.classList.remove('open');
+              detailBox.removeAttribute('data-item');
+              detailBox.innerHTML = '';
+              return;
+            }
+            detailBox.dataset.item = key;
+            detailBox.innerHTML = `
+              <h3>${item.title}</h3>
+              <p>${item.text}</p>
+              <p class="source">${item.source}</p>
+            `;
+            detailBox.classList.add('open');
+          });
+        });
+      }
+
+      function bindPersona() {
+        const detailBox = document.getElementById('personaDetail');
+        document.querySelectorAll('.persona-page .card').forEach((card) => {
+          card.addEventListener('click', () => {
+            const key = card.dataset.scene;
+            const item = personaDetails[key];
+            if (!item) return;
+            const same = detailBox.dataset.scene === key && detailBox.classList.contains('open');
+            if (same) {
+              detailBox.classList.remove('open');
+              detailBox.removeAttribute('data-scene');
+              detailBox.innerHTML = '';
+              return;
+            }
+            detailBox.dataset.scene = key;
+            detailBox.innerHTML = `<h3>${item.title}</h3><p>${item.text}</p>`;
+            detailBox.classList.add('open');
+          });
+        });
+      }
+
+      function bindIssues() {
+        const detailBox = document.getElementById('issuesDetail');
+        document.querySelectorAll('.issues-page .card').forEach((card) => {
+          card.addEventListener('click', () => {
+            const key = card.dataset.type;
+            const item = issuesDetails[key];
+            if (!item) return;
+            const same = detailBox.dataset.type === key && detailBox.classList.contains('open');
+            if (same) {
+              detailBox.classList.remove('open');
+              detailBox.removeAttribute('data-type');
+              detailBox.innerHTML = '';
+              return;
+            }
+            detailBox.dataset.type = key;
+            detailBox.innerHTML = `<h3>${item.title}</h3><p>${item.text}</p>`;
+            detailBox.classList.add('open');
+          });
+        });
+      }
+
+      function bindCompare() {
+        const detailBox = document.getElementById('compareDetail');
+        document.querySelectorAll('.compare-page .card').forEach((card) => {
+          card.addEventListener('click', () => {
+            const key = card.dataset.service;
+            const item = compareDetails[key];
+            if (!item) return;
+            const same = detailBox.dataset.service === key && detailBox.classList.contains('open');
+            if (same) {
+              detailBox.classList.remove('open');
+              detailBox.removeAttribute('data-service');
+              detailBox.innerHTML = '';
+              return;
+            }
+            detailBox.dataset.service = key;
+            detailBox.innerHTML = `
+              <h3 class="detail-title">${item.title}</h3>
+              <p>${item.text}</p>
+              <p>記号の意味：○＝確認できた、△＝統計にもとづく目安、×＝確認できず。</p>
+            `;
+            detailBox.classList.add('open');
+          });
+        });
+      }
+
+      bindBackground();
+      bindPersona();
+      bindIssues();
+      bindCompare();
+      render();
+    </script>
+  </div>
+</body>
+</html>

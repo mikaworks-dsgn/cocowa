@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>比較デモ - cocowa</title>
+    <style>
+      :root {
+        --bg: #f7f7f7;
+        --panel: #ffffff;
+        --line: #dfe4ea;
+        --text: #1f2937;
+        --muted: #4b5563;
+        --accent: #4f46e5;
+        --accent-soft: #eef2ff;
+        --good: #1f9d67;
+        --warn: #d97706;
+        --bad: #9ca3af;
+        --shadow: 0 8px 20px rgba(31, 41, 55, 0.08);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Segoe UI", "Hiragino Sans", "Yu Gothic", sans-serif;
+        background: var(--bg);
+        color: var(--text);
+      }
+
+      .wrap {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 40px 20px 60px;
+      }
+
+      h1 {
+        margin: 0 0 12px;
+        font-size: 32px;
+        text-align: center;
+      }
+
+      .subtitle {
+        margin: 0 0 28px;
+        text-align: center;
+        color: var(--muted);
+        font-size: 18px;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(180px, 1fr));
+        gap: 18px;
+      }
+
+      .card {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        box-shadow: var(--shadow);
+        overflow: hidden;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        cursor: pointer;
+      }
+
+      .card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 24px rgba(31, 41, 55, 0.12);
+      }
+
+      .card-header {
+        padding: 18px 18px 14px;
+        border-bottom: 1px solid var(--line);
+        background: var(--accent-soft);
+      }
+
+      .service-name {
+        margin: 0;
+        font-size: 20px;
+        line-height: 1.4;
+      }
+
+      .metrics {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 8px;
+        padding: 18px;
+      }
+
+      .metric {
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 12px 10px;
+        text-align: center;
+        background: #fafafa;
+      }
+
+      .metric-label {
+        display: block;
+        font-size: 12px;
+        color: var(--muted);
+        margin-bottom: 8px;
+      }
+
+      .mark {
+        font-size: 26px;
+        font-weight: 700;
+      }
+
+      .good { color: var(--good); }
+      .warn { color: var(--warn); }
+      .bad { color: var(--bad); }
+
+      .detail {
+        margin-top: 18px;
+        display: none;
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        box-shadow: var(--shadow);
+        padding: 20px 22px;
+      }
+
+      .detail.open {
+        display: block;
+      }
+
+      .detail-title {
+        margin: 0 0 10px;
+        font-size: 22px;
+      }
+
+      .detail p {
+        margin: 0 0 10px;
+        font-size: 16px;
+        line-height: 1.7;
+        color: var(--text);
+      }
+
+      .note {
+        margin-top: 30px;
+        border-top: 1px solid var(--line);
+        padding-top: 20px;
+      }
+
+      .note h2 {
+        font-size: 22px;
+        margin: 0 0 12px;
+      }
+
+      .note ul {
+        margin: 0;
+        padding-left: 20px;
+        font-size: 16px;
+        line-height: 1.8;
+        color: var(--text);
+      }
+
+      .source {
+        margin-top: 14px;
+        font-size: 16px;
+        line-height: 1.6;
+        color: var(--muted);
+      }
+
+      @media (max-width: 900px) {
+        .grid {
+          grid-template-columns: repeat(2, minmax(180px, 1fr));
+        }
+      }
+
+      @media (max-width: 560px) {
+        .grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <h1>既存サービスとの比較</h1>
+      <p class="subtitle">比較の見え方を、1枚で確認</p>
+
+      <div class="grid">
+        <article class="card" data-service="google">
+          <div class="card-header">
+            <h2 class="service-name">Googleマップ（位置情報の統計）</h2>
+          </div>
+          <div class="metrics">
+            <div class="metric"><span class="metric-label">いまの混み具合</span><span class="mark warn">△</span></div>
+            <div class="metric"><span class="metric-label">待ち時間</span><span class="mark warn">△</span></div>
+            <div class="metric"><span class="metric-label">商品の残り</span><span class="mark bad">×</span></div>
+          </div>
+        </article>
+
+        <article class="card" data-service="yahoo">
+          <div class="card-header">
+            <h2 class="service-name">Yahoo!MAP 混雑レーダー（位置情報の統計）</h2>
+          </div>
+          <div class="metrics">
+            <div class="metric"><span class="metric-label">いまの混み具合</span><span class="mark warn">△</span></div>
+            <div class="metric"><span class="metric-label">待ち時間</span><span class="mark bad">×</span></div>
+            <div class="metric"><span class="metric-label">商品の残り</span><span class="mark bad">×</span></div>
+          </div>
+        </article>
+
+        <article class="card" data-service="queue">
+          <div class="card-header">
+            <h2 class="service-name">順番待ちシステム（お店のシステム）</h2>
+          </div>
+          <div class="metrics">
+            <div class="metric"><span class="metric-label">いまの混み具合</span><span class="mark good">○</span></div>
+            <div class="metric"><span class="metric-label">待ち時間</span><span class="mark good">○</span></div>
+            <div class="metric"><span class="metric-label">商品の残り</span><span class="mark bad">×</span></div>
+          </div>
+        </article>
+
+        <article class="card" data-service="cocowa">
+          <div class="card-header">
+            <h2 class="service-name">cocowa（現場の人の投稿）</h2>
+          </div>
+          <div class="metrics">
+            <div class="metric"><span class="metric-label">いまの混み具合</span><span class="mark good">○</span></div>
+            <div class="metric"><span class="metric-label">待ち時間</span><span class="mark good">○</span></div>
+            <div class="metric"><span class="metric-label">商品の残り</span><span class="mark good">○</span></div>
+          </div>
+        </article>
+      </div>
+
+      <div id="detail" class="detail" aria-live="polite"></div>
+
+      <div class="note">
+        <h2>記号の意味</h2>
+        <ul>
+          <li>○＝確認できた（順番待ちシステムは、導入している店のみ）</li>
+          <li>△＝統計にもとづく目安（エリア単位を含む）</li>
+          <li>×＝確認できず（機能がないという意味ではなく、調べた範囲で見つからなかった）</li>
+        </ul>
+        <p class="source">出典：Google公式ブログ（2020年10月）、Yahoo! JAPAN プレスリリース（2020年）、順番待ちシステムの解説記事（ASPIC）</p>
+      </div>
+    </div>
+
+    <script>
+      const details = {
+        google: {
+          title: 'Googleマップ（位置情報の統計）',
+          text: 'いまの混み具合と待ち時間は、位置情報にもとづく統計として目安として確認できるが、商品の残りや現場の一言は確認できず。'
+        },
+        yahoo: {
+          title: 'Yahoo!MAP 混雑レーダー（位置情報の統計）',
+          text: 'いまの混み具合は確認できるが、待ち時間や商品の残りの情報は調べた範囲では確認できなかった。'
+        },
+        queue: {
+          title: '順番待ちシステム（お店のシステム）',
+          text: 'お店側のシステムで、いまの混み具合や待ち時間は確認できる。ただし、商品の残りや現場の一言までは確認できなかった。'
+        },
+        cocowa: {
+          title: 'cocowa（現場の人の投稿）',
+          text: '現場の人の投稿で、いまの混み具合・待ち時間・商品の残りを一緒に確認できる。これは現場の一言を使う価値がある。'
+        }
+      };
+
+      const detailBox = document.getElementById('detail');
+
+      document.querySelectorAll('.card').forEach((card) => {
+        card.addEventListener('click', () => {
+          const key = card.dataset.service;
+          const item = details[key];
+          if (!item) return;
+
+          const opened = detailBox.classList.contains('open');
+          const same = detailBox.dataset.service === key;
+
+          if (opened && same) {
+            detailBox.classList.remove('open');
+            detailBox.removeAttribute('data-service');
+            detailBox.innerHTML = '';
+            return;
+          }
+
+          detailBox.dataset.service = key;
+          detailBox.innerHTML = `
+            <h3 class="detail-title">${item.title}</h3>
+            <p>${item.text}</p>
+            <p>記号の意味：○＝確認できた、△＝統計にもとづく目安、×＝確認できず。</p>
+          `;
+          detailBox.classList.add('open');
+        });
+      });
+    </script>
+  </body>
+</html>
