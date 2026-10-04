@@ -1,8 +1,10 @@
 ---
 marp: true
 paginate: true
+theme: gaia
 ---
 
+<!-- _class: lead -->
 # cocowa
 
 ここの“いま”を、みんなで共有。
@@ -52,13 +54,15 @@ Aさん（仮）：20代後半、丸の内のオフィスで働く会社員。�
 <style scoped>
   table {
     font-size: 24px;
-    line-height: 1.2;
+    line-height: 1.3;
     width: 100%;
     table-layout: fixed;
+    border-collapse: collapse;
   }
   th, td {
-    padding: 8px 10px;
+    padding: 10px 12px;
     vertical-align: middle;
+    text-align: center;
     word-break: break-word;
     overflow-wrap: break-word;
   }
@@ -83,13 +87,13 @@ Aさん（仮）：20代後半、丸の内のオフィスで働く会社員。�
 
 <style scoped>
   ul {
-    margin: 0.4rem 0 0.6rem 1.2rem;
+    margin: 0.4rem 0 0.7rem 1.2rem;
     padding-left: 1rem;
   }
   li {
     font-size: 22px;
     line-height: 1.5;
-    margin-bottom: 0.2rem;
+    margin-bottom: 0.3rem;
   }
   p {
     font-size: 22px;
